@@ -191,7 +191,8 @@ export default {
                         { Name: 'AWS_DEFAULT_REGION',           Value: cf.region },
                         { Name: 'AUTHENTIK_HOST',               Value: cf.join(['https://auth.', cf.importValue(cf.join(['tak-vpc-', cf.ref('Environment'), '-hosted-zone-name']))]) },
                         { Name: 'AUTHENTIK_INSECURE',           Value: 'false' },
-                        { Name: 'AUTHENTIK_LDAP__PAGE_SIZE',    Value: cf.ref('LdapPageSize') }
+                        // Users and groups per API page when the outpost rebuilds its snapshot (authentik default 50; the core clamps it to its Maximum page size setting, so raise that first)
+                        { Name: 'AUTHENTIK_LDAP__PAGE_SIZE',    Value: 200 }
                     ],
                     Secrets: [
                         { Name: 'AUTHENTIK_TOKEN', ValueFrom: cf.join(['arn:', cf.partition, ':secretsmanager:', cf.region, ':', cf.accountId, ':secret:', AuthStackName, '/authentik-ldap-token']) }

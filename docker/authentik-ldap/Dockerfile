@@ -1,18 +1,22 @@
 # syntax=docker/dockerfile:1
 
-# Interim image: authentik 2026.8.4 LDAP outpost with the memory-searcher
-# DN-index fix (upstream PR follows a production soak; lab record in
-# frontend-cotak docs/scratches/outpost-lab/dn-index-lab-2026-10-16.md).
-# The builder compiles the outpost binary from the release tag plus the one
-# patch commit, using the same toolchain image and flags as upstream's
+# Interim image: authentik 2026.8.6 LDAP outpost with two fixes that no
+# 2026.8.x release carries:
+#   - the memory-searcher DN index (upstream PR #27120, open; lab record in
+#     frontend-cotak docs/scratches/outpost-lab/dn-index-lab-2026-10-16.md)
+#   - the cached binder applying provider changes on refresh (upstream PR
+#     #27402, merged to main 2026-11-02, not backported to 2026.8)
+# The builder compiles the outpost binary from the release tag plus the two
+# patch commits, using the same toolchain image and flags as upstream's
 # lifecycle/container/ldap.Dockerfile at that tag; the runtime stage is the
 # unmodified official image with only /ldap replaced. Revert to a plain
-# FROM ghcr.io/goauthentik/ldap:<version> once a release carries the fix.
+# FROM ghcr.io/goauthentik/ldap:<version> once a release carries both.
 
-# lab/2026.8.4-dn-index = version/2026.8.4 + the DN-index commit
-ARG AUTHENTIK_REF=895c4dc8488fd7405f7e7ff424782c2b39feb535
+# lab/2026.8.6-dn-index-session-binder = version/2026.8.6 + the DN-index
+# commit + the session-binder commit
+ARG AUTHENTIK_REF=897f51c607b69a51b4a0f22ac42f114f56f1b7f2
 
-FROM docker.io/library/golang:1.27-trixie@sha256:6212da3924947f4b6a939df02ea627c13f338f1a41d6c3fcb0dd9d076eef46c4 AS builder
+FROM docker.io/library/golang:1.27-trixie@sha256:1896654cfc5c2b5ad74c07f29cb36f5d2d1cbed42e3054070fbfe444e521e83c AS builder
 
 ARG AUTHENTIK_REPO=https://github.com/dfpc-coe/authentik.git
 ARG AUTHENTIK_REF
@@ -31,7 +35,7 @@ RUN --mount=type=cache,target=/go/pkg/mod \
     CGO_ENABLED=1 GOFIPS140=latest \
     go build -o /go/ldap ./cmd/ldap
 
-FROM ghcr.io/goauthentik/ldap:2026.8.4
+FROM ghcr.io/goauthentik/ldap:2026.8.6
 
 LABEL org.opencontainers.image.source=https://github.com/dfpc-coe/auth-infra
 LABEL org.opencontainers.image.description="Authentik server for TAK server auth via LDAP"

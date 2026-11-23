@@ -12,6 +12,8 @@
 
 ### Pending Release
 
+### v3.12.0 - 2026-11-16
+
 - :arrow_up: Authentik@2026.8.6
 - :rocket: LDAP outpost image rebased onto 2026.8.6, now also carrying the cached-binder refresh fix (provider bind settings apply without a restart)
 

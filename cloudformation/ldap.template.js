@@ -20,7 +20,7 @@ export default cf.merge(
                 Type: 'String',
                 AllowedValues: ['prod', 'dev-test'],
                 Default: 'prod'
-            },
+            }
         }
     }
 );

@@ -12,6 +12,9 @@
 
 ### Pending Release
 
+- :arrow_up: Authentik@2026.8.6
+- :rocket: LDAP outpost image rebased onto 2026.8.6, now also carrying the cached-binder refresh fix (provider bind settings apply without a restart)
+
 ### v3.11.1 - 2026-11-16
 
 - :rocket: `LdapPageSize` parameter on the LDAP stack: users and groups per API page when the outpost rebuilds its snapshot (`AUTHENTIK_LDAP__PAGE_SIZE`, default 50). Raise the core's Maximum page size setting before going above 100.
